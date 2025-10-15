@@ -260,6 +260,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Check, Message, Edit } from '@element-plus/icons-vue'
+import { notificationConfigService } from '@/api'
 
 // 响应式数据
 const saving = ref(false)
@@ -307,40 +308,7 @@ const wechatForm = reactive({
 })
 
 // 通知模板数据
-const notificationTemplates = ref([
-  {
-    id: 1,
-    name: '登录通知',
-    type: 'login',
-    title: '登录通知',
-    content: '您的账号在 {time} 从 {ip} 登录，如非本人操作，请及时修改密码。',
-    status: 'active'
-  },
-  {
-    id: 2,
-    name: '密码修改通知',
-    type: 'password_change',
-    title: '密码修改通知',
-    content: '您的账号密码已于 {time} 被修改，如非本人操作，请联系管理员。',
-    status: 'active'
-  },
-  {
-    id: 3,
-    name: '系统维护通知',
-    type: 'maintenance',
-    title: '系统维护通知',
-    content: '系统将于 {start_time} 至 {end_time} 进行维护，期间可能影响正常使用。',
-    status: 'active'
-  },
-  {
-    id: 4,
-    name: '异常登录通知',
-    type: 'abnormal_login',
-    title: '异常登录通知',
-    content: '检测到您的账号在 {time} 从 {ip} 异常登录，请确认是否为本人操作。',
-    status: 'active'
-  }
-])
+const notificationTemplates = ref([])
 
 // 表单验证规则
 const notificationFormRules = {
@@ -416,10 +384,20 @@ const handleSave = async () => {
     
     saving.value = true
     
-    // 模拟保存API调用
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    const configData = {
+      ...notificationForm,
+      ...emailForm,
+      ...smsForm,
+      ...wechatForm
+    }
     
-    ElMessage.success('配置保存成功')
+    const response = await notificationConfigService.updateNotificationConfig(configData)
+    
+    if (response.code === 200) {
+      ElMessage.success('配置保存成功')
+    } else {
+      ElMessage.error(response.message || '配置保存失败')
+    }
   } catch (error) {
     if (error !== false) {
       ElMessage.error('配置保存失败')
@@ -508,10 +486,66 @@ const getNotificationTypeName = (type) => {
   return nameMap[type] || '其他'
 }
 
+// 获取配置
+const getConfig = async () => {
+  try {
+    const response = await notificationConfigService.getNotificationConfig()
+    if (response.code === 200) {
+      const config = response.data
+      Object.assign(notificationForm, config)
+      // 分离邮件配置
+      if (config.smtpHost) {
+        Object.assign(emailForm, {
+          smtpHost: config.smtpHost,
+          smtpPort: config.smtpPort,
+          senderEmail: config.senderEmail,
+          senderName: config.senderName,
+          username: config.username,
+          password: config.password,
+          enableSsl: config.enableSsl,
+          enableTls: config.enableTls
+        })
+      }
+      // 分离短信配置
+      if (config.provider) {
+        Object.assign(smsForm, {
+          provider: config.provider,
+          accessKey: config.accessKey,
+          secretKey: config.secretKey,
+          signature: config.signature
+        })
+      }
+      // 分离微信配置
+      if (config.corpId) {
+        Object.assign(wechatForm, {
+          corpId: config.corpId,
+          agentId: config.agentId,
+          secret: config.secret,
+          token: config.token
+        })
+      }
+    }
+  } catch (error) {
+    console.error('获取通知配置失败:', error)
+  }
+}
+
+// 获取通知模板
+const getNotificationTemplates = async () => {
+  try {
+    const response = await notificationConfigService.getNotificationTemplates()
+    if (response.code === 200) {
+      notificationTemplates.value = response.data
+    }
+  } catch (error) {
+    console.error('获取通知模板失败:', error)
+  }
+}
+
 // 初始化
 onMounted(() => {
-  // 这里可以加载已保存的配置
-  console.log('通知配置页面初始化')
+  getConfig()
+  getNotificationTemplates()
 })
 </script>
 

@@ -223,6 +223,7 @@ import {
   Microphone,
   Files
 } from '@element-plus/icons-vue'
+import { fileService } from '@/api'
 
 // 响应式数据
 const loading = ref(false)
@@ -251,83 +252,24 @@ const uploadHeaders = ref({
   'Authorization': 'Bearer ' + localStorage.getItem('token')
 })
 
-// 模拟数据
-const mockFiles = [
-  {
-    id: 1,
-    name: 'logo.png',
-    type: 'image',
-    size: 102400,
-    path: '/uploads/images/logo.png',
-    url: 'https://via.placeholder.com/300x200',
-    uploader: 'admin',
-    uploadTime: '2024-01-15 10:30:00'
-  },
-  {
-    id: 2,
-    name: '用户手册.pdf',
-    type: 'document',
-    size: 2048000,
-    path: '/uploads/documents/用户手册.pdf',
-    url: '/uploads/documents/用户手册.pdf',
-    uploader: 'admin',
-    uploadTime: '2024-01-15 09:15:00'
-  },
-  {
-    id: 3,
-    name: '演示视频.mp4',
-    type: 'video',
-    size: 15728640,
-    path: '/uploads/videos/演示视频.mp4',
-    url: 'https://www.w3schools.com/html/mov_bbb.mp4',
-    uploader: 'admin',
-    uploadTime: '2024-01-14 16:45:00'
-  },
-  {
-    id: 4,
-    name: '背景音乐.mp3',
-    type: 'audio',
-    size: 5120000,
-    path: '/uploads/audio/背景音乐.mp3',
-    url: '/uploads/audio/背景音乐.mp3',
-    uploader: 'admin',
-    uploadTime: '2024-01-14 14:20:00'
-  },
-  {
-    id: 5,
-    name: '系统配置.json',
-    type: 'other',
-    size: 2048,
-    path: '/uploads/others/系统配置.json',
-    url: '/uploads/others/系统配置.json',
-    uploader: 'admin',
-    uploadTime: '2024-01-14 11:30:00'
-  }
-]
 
 // 获取文件列表
 const getFileList = async () => {
   loading.value = true
   try {
-    // 模拟API调用
-    await new Promise(resolve => setTimeout(resolve, 300))
+    const response = await fileService.getFileList({
+      page: pagination.page,
+      size: pagination.size,
+      keyword: searchForm.keyword,
+      fileType: searchForm.fileType
+    })
     
-    let filteredFiles = [...mockFiles]
-    
-    // 关键词搜索
-    if (searchForm.keyword) {
-      filteredFiles = filteredFiles.filter(file => 
-        file.name.includes(searchForm.keyword)
-      )
+    if (response.code === 200) {
+      files.value = response.data.list
+      pagination.total = response.data.total
+    } else {
+      ElMessage.error(response.message || '获取文件列表失败')
     }
-    
-    // 文件类型筛选
-    if (searchForm.fileType) {
-      filteredFiles = filteredFiles.filter(file => file.type === searchForm.fileType)
-    }
-    
-    files.value = filteredFiles
-    pagination.total = filteredFiles.length
   } catch (error) {
     ElMessage.error('获取文件列表失败')
     console.error('获取文件列表失败:', error)

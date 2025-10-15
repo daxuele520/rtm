@@ -186,6 +186,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Check } from '@element-plus/icons-vue'
+import { websiteConfigService } from '@/api'
 
 // 响应式数据
 const saving = ref(false)
@@ -259,10 +260,18 @@ const handleSave = async () => {
     
     saving.value = true
     
-    // 模拟保存API调用
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    const configData = {
+      ...websiteForm,
+      ...seoForm
+    }
     
-    ElMessage.success('配置保存成功')
+    const response = await websiteConfigService.updateWebsiteConfig(configData)
+    
+    if (response.code === 200) {
+      ElMessage.success('配置保存成功')
+    } else {
+      ElMessage.error(response.message || '配置保存失败')
+    }
   } catch (error) {
     if (error !== false) {
       ElMessage.error('配置保存失败')
@@ -283,10 +292,33 @@ const handleUploadFavicon = () => {
   ElMessage.info('网站图标上传功能待实现')
 }
 
+// 获取配置
+const getConfig = async () => {
+  try {
+    const response = await websiteConfigService.getWebsiteConfig()
+    if (response.code === 200) {
+      const config = response.data
+      Object.assign(websiteForm, config)
+      // 分离SEO配置
+      if (config.defaultLanguage) {
+        Object.assign(seoForm, {
+          defaultLanguage: config.defaultLanguage,
+          charset: config.charset,
+          robots: config.robots,
+          sitemap: config.sitemap,
+          enableGzip: config.enableGzip,
+          enableCDN: config.enableCDN
+        })
+      }
+    }
+  } catch (error) {
+    console.error('获取网站配置失败:', error)
+  }
+}
+
 // 初始化
 onMounted(() => {
-  // 这里可以加载已保存的配置
-  console.log('网站配置页面初始化')
+  getConfig()
 })
 </script>
 

@@ -226,6 +226,7 @@ import {
   View,
   Edit
 } from '@element-plus/icons-vue'
+import { dictionaryService } from '@/api'
 
 // 响应式数据
 const loading = ref(false)
@@ -284,139 +285,24 @@ const dictionaryFormRules = {
   ]
 }
 
-// 模拟数据
-const mockDictionaries = [
-  {
-    id: 1,
-    name: '用户状态',
-    code: 'user_status',
-    value: '',
-    parentId: null,
-    sort: 1,
-    status: 'active',
-    description: '用户状态字典',
-    updatedAt: '2024-01-15 10:30:00',
-    children: [
-      {
-        id: 2,
-        name: '正常',
-        code: 'user_status',
-        value: 'active',
-        parentId: 1,
-        sort: 1,
-        status: 'active',
-        description: '正常状态',
-        updatedAt: '2024-01-15 10:30:00'
-      },
-      {
-        id: 3,
-        name: '禁用',
-        code: 'user_status',
-        value: 'inactive',
-        parentId: 1,
-        sort: 2,
-        status: 'active',
-        description: '禁用状态',
-        updatedAt: '2024-01-15 10:30:00'
-      }
-    ]
-  },
-  {
-    id: 4,
-    name: '性别',
-    code: 'gender',
-    value: '',
-    parentId: null,
-    sort: 2,
-    status: 'active',
-    description: '性别字典',
-    updatedAt: '2024-01-15 10:30:00',
-    children: [
-      {
-        id: 5,
-        name: '男',
-        code: 'gender',
-        value: 'male',
-        parentId: 4,
-        sort: 1,
-        status: 'active',
-        description: '男性',
-        updatedAt: '2024-01-15 10:30:00'
-      },
-      {
-        id: 6,
-        name: '女',
-        code: 'gender',
-        value: 'female',
-        parentId: 4,
-        sort: 2,
-        status: 'active',
-        description: '女性',
-        updatedAt: '2024-01-15 10:30:00'
-      }
-    ]
-  },
-  {
-    id: 7,
-    name: '菜单类型',
-    code: 'menu_type',
-    value: '',
-    parentId: null,
-    sort: 3,
-    status: 'active',
-    description: '菜单类型字典',
-    updatedAt: '2024-01-15 10:30:00',
-    children: [
-      {
-        id: 8,
-        name: '菜单',
-        code: 'menu_type',
-        value: 'menu',
-        parentId: 7,
-        sort: 1,
-        status: 'active',
-        description: '菜单类型',
-        updatedAt: '2024-01-15 10:30:00'
-      },
-      {
-        id: 9,
-        name: '按钮',
-        code: 'menu_type',
-        value: 'button',
-        parentId: 7,
-        sort: 2,
-        status: 'active',
-        description: '按钮类型',
-        updatedAt: '2024-01-15 10:30:00'
-      }
-    ]
-  }
-]
 
 // 获取字典列表
 const getDictionaryList = async () => {
   loading.value = true
   try {
-    // 模拟API调用
-    await new Promise(resolve => setTimeout(resolve, 300))
+    const response = await dictionaryService.getDictionaryList({
+      page: pagination.page,
+      size: pagination.size,
+      keyword: searchForm.keyword,
+      status: searchForm.status
+    })
     
-    let filteredDictionaries = [...mockDictionaries]
-    
-    // 关键词搜索
-    if (searchForm.keyword) {
-      filteredDictionaries = filteredDictionaries.filter(dict => 
-        dict.name.includes(searchForm.keyword) || 
-        dict.code.includes(searchForm.keyword)
-      )
+    if (response.code === 200) {
+      dictionaries.value = response.data.list
+      pagination.total = response.data.total
+    } else {
+      ElMessage.error(response.message || '获取字典列表失败')
     }
-    
-    // 状态筛选
-    if (searchForm.status) {
-      filteredDictionaries = filteredDictionaries.filter(dict => dict.status === searchForm.status)
-    }
-    
-    dictionaries.value = filteredDictionaries
-    pagination.total = filteredDictionaries.length
   } catch (error) {
     ElMessage.error('获取字典列表失败')
     console.error('获取字典列表失败:', error)
@@ -428,14 +314,14 @@ const getDictionaryList = async () => {
 // 获取父级字典选项
 const getParentDictionaryOptions = async () => {
   try {
-    // 模拟API调用
-    await new Promise(resolve => setTimeout(resolve, 200))
-    
-    const parentDictionaries = mockDictionaries.filter(dict => dict.parentId === null)
-    parentDictionaryOptions.value = parentDictionaries.map(dict => ({
-      value: dict.id,
-      label: dict.name
-    }))
+    const response = await dictionaryService.getDictionaryList({})
+    if (response.code === 200) {
+      const parentDictionaries = response.data.list.filter(dict => dict.parentId === null)
+      parentDictionaryOptions.value = parentDictionaries.map(dict => ({
+        value: dict.id,
+        label: dict.name
+      }))
+    }
   } catch (error) {
     console.error('获取父级字典选项失败:', error)
   }
@@ -636,3 +522,6 @@ onMounted(() => {
   text-align: right;
 }
 </style>
+
+
+

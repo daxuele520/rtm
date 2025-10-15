@@ -229,6 +229,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Check } from '@element-plus/icons-vue'
+import { systemConfigService } from '@/api'
 
 // 响应式数据
 const saving = ref(false)
@@ -317,10 +318,19 @@ const handleSave = async () => {
     
     saving.value = true
     
-    // 模拟保存API调用
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    const configData = {
+      ...systemForm,
+      logConfig: logForm,
+      performanceConfig: performanceForm
+    }
     
-    ElMessage.success('配置保存成功')
+    const response = await systemConfigService.updateSystemConfig(configData)
+    
+    if (response.code === 200) {
+      ElMessage.success('配置保存成功')
+    } else {
+      ElMessage.error(response.message || '配置保存失败')
+    }
   } catch (error) {
     if (error !== false) {
       ElMessage.error('配置保存失败')
@@ -331,10 +341,28 @@ const handleSave = async () => {
   }
 }
 
+// 获取配置
+const getConfig = async () => {
+  try {
+    const response = await systemConfigService.getSystemConfig()
+    if (response.code === 200) {
+      const config = response.data
+      Object.assign(systemForm, config)
+      if (config.logConfig) {
+        Object.assign(logForm, config.logConfig)
+      }
+      if (config.performanceConfig) {
+        Object.assign(performanceForm, config.performanceConfig)
+      }
+    }
+  } catch (error) {
+    console.error('获取系统配置失败:', error)
+  }
+}
+
 // 初始化
 onMounted(() => {
-  // 这里可以加载已保存的配置
-  console.log('系统配置页面初始化')
+  getConfig()
 })
 </script>
 

@@ -36,6 +36,24 @@
           />
         </el-form-item>
         
+        <el-form-item prop="captcha">
+          <div class="captcha-container">
+            <el-input
+              v-model="loginForm.captcha"
+              placeholder="请输入验证码"
+              size="large"
+              prefix-icon="Picture"
+              clearable
+              class="captcha-input"
+              @keyup.enter="handleLogin"
+            />
+            <div class="captcha-image" @click="refreshCaptcha">
+              <img v-if="captchaImage" :src="captchaImage" alt="验证码" />
+              <div v-else class="captcha-placeholder">点击获取验证码</div>
+            </div>
+          </div>
+        </el-form-item>
+        
         <el-form-item>
           <el-button
             type="primary"
@@ -69,19 +87,22 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { userService } from '@/api'
 
 const router = useRouter()
 const authStore = useAuthStore()
 
 const loginFormRef = ref()
 const loading = ref(false)
+const captchaImage = ref('')
 
 const loginForm = reactive({
   username: '',
-  password: ''
+  password: '',
+  captcha: ''
 })
 
 const loginRules = {
@@ -91,6 +112,10 @@ const loginRules = {
   password: [
     { required: true, message: '请输入密码', trigger: 'blur' },
     { min: 6, message: '密码长度不能少于6位', trigger: 'blur' }
+  ],
+  captcha: [
+    { required: true, message: '请输入验证码', trigger: 'blur' },
+    { min: 4, max: 4, message: '验证码长度为4位', trigger: 'blur' }
   ]
 }
 
@@ -113,6 +138,29 @@ const handleLogin = async () => {
     loading.value = false
   }
 }
+
+// 获取验证码
+const getCaptcha = async () => {
+  try {
+    const response = await userService.getCaptcha()
+    if (response.code === 200) {
+      captchaImage.value = response.data.image
+    }
+  } catch (error) {
+    console.error('获取验证码失败:', error)
+  }
+}
+
+// 刷新验证码
+const refreshCaptcha = () => {
+  getCaptcha()
+  loginForm.captcha = ''
+}
+
+// 页面加载时获取验证码
+onMounted(() => {
+  getCaptcha()
+})
 
 const fillAccount = (username, password) => {
   loginForm.username = username
@@ -201,5 +249,44 @@ const fillAccount = (username, password) => {
 
 .account:hover {
   background-color: #f0f9ff;
+}
+
+.captcha-container {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.captcha-input {
+  flex: 1;
+}
+
+.captcha-image {
+  width: 120px;
+  height: 40px;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5f7fa;
+  transition: border-color 0.3s;
+}
+
+.captcha-image:hover {
+  border-color: #409eff;
+}
+
+.captcha-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.captcha-placeholder {
+  color: #909399;
+  font-size: 12px;
+  text-align: center;
 }
 </style>

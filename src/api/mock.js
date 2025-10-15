@@ -1,5 +1,10 @@
 // 模拟数据存储
 let mockData = {
+  // 存储当前验证码
+  currentCaptcha: {
+    code: '',
+    image: ''
+  },
   users: [
     {
       id: 1,
@@ -356,6 +361,18 @@ let mockData = {
       size: '2.1MB',
       createTime: '2023-01-10 00:00:00',
       updateTime: '2023-01-23 07:40:00'
+    },
+    {
+      id: 11,
+      name: '权限表',
+      description: '管理系统权限信息',
+      category: '权限管理',
+      status: 'active',
+      columns: 6,
+      rows: 24,
+      size: '0.8MB',
+      createTime: '2023-01-11 00:00:00',
+      updateTime: '2023-01-24 08:50:00'
     }
   ],
   loginLogs: [
@@ -454,6 +471,366 @@ let mockData = {
       status: 'success',
       message: '登录成功',
       loginTime: '2024-01-25 16:35:42'
+    },
+    {
+      id: 9,
+      username: 'admin',
+      realName: '系统管理员',
+      ip: '192.168.1.100',
+      location: '中国-广东省-深圳市',
+      browser: 'Chrome 120.0.0',
+      os: 'Windows 10',
+      status: 'success',
+      message: '登录成功',
+      loginTime: '2024-01-25 17:20:18'
+    },
+    {
+      id: 10,
+      username: 'admin',
+      realName: '系统管理员',
+      ip: '192.168.1.100',
+      location: '中国-广东省-深圳市',
+      browser: 'Chrome 120.0.0',
+      os: 'Windows 10',
+      status: 'success',
+      message: '登录成功',
+      loginTime: '2024-01-25 18:20:18'
+    },
+    {
+      id: 11,
+      username: 'admin',
+      realName: '系统管理员',
+      ip: '192.168.1.100',
+      location: '中国-广东省-深圳市',
+      browser: 'Chrome 120.0.0',
+      os: 'Windows 10',
+      status: 'success',
+      message: '登录成功',
+      loginTime: '2024-01-25 19:20:18'
+    }
+  ],
+  
+  // 基础配置相关数据
+  dictionaries: [
+    {
+      id: 1,
+      name: '用户状态2',
+      code: 'user_status',
+      value: '',
+      parentId: null,
+      sort: 1,
+      status: 'active',
+      description: '用户状态字典',
+      updatedAt: '2024-01-15 10:30:00',
+      children: [
+        {
+          id: 2,
+          name: '正常',
+          code: 'user_status',
+          value: 'active',
+          parentId: 1,
+          sort: 1,
+          status: 'active',
+          description: '正常状态',
+          updatedAt: '2024-01-15 10:30:00'
+        },
+        {
+          id: 3,
+          name: '禁用',
+          code: 'user_status',
+          value: 'inactive',
+          parentId: 1,
+          sort: 2,
+          status: 'active',
+          description: '禁用状态',
+          updatedAt: '2024-01-15 10:30:00'
+        }
+      ]
+    },
+    {
+      id: 4,
+      name: '性别',
+      code: 'gender',
+      value: '',
+      parentId: null,
+      sort: 2,
+      status: 'active',
+      description: '性别字典',
+      updatedAt: '2024-01-15 10:30:00',
+      children: [
+        {
+          id: 5,
+          name: '男',
+          code: 'gender',
+          value: 'male',
+          parentId: 4,
+          sort: 1,
+          status: 'active',
+          description: '男性',
+          updatedAt: '2024-01-15 10:30:00'
+        },
+        {
+          id: 6,
+          name: '女',
+          code: 'gender',
+          value: 'female',
+          parentId: 4,
+          sort: 2,
+          status: 'active',
+          description: '女性',
+          updatedAt: '2024-01-15 10:30:00'
+        }
+      ]
+    }
+  ],
+  
+  files: [
+    {
+      id: 1,
+      name: 'logo.png',
+      type: 'image',
+      size: 102400,
+      path: '/uploads/images/logo.png',
+      url: 'https://via.placeholder.com/300x200',
+      uploader: 'admin',
+      uploadTime: '2024-01-15 10:30:00'
+    },
+    {
+      id: 2,
+      name: '用户手册.pdf',
+      type: 'document',
+      size: 2048000,
+      path: '/uploads/documents/用户手册.pdf',
+      url: '/uploads/documents/用户手册.pdf',
+      uploader: 'admin',
+      uploadTime: '2024-01-15 09:15:00'
+    },
+    {
+      id: 3,
+      name: '演示视频.mp4',
+      type: 'video',
+      size: 15728640,
+      path: '/uploads/videos/演示视频.mp4',
+      url: 'https://www.w3schools.com/html/mov_bbb.mp4',
+      uploader: 'admin',
+      uploadTime: '2024-01-14 16:45:00'
+    },
+    {
+      id: 4,
+      name: '背景音乐1.mp3',
+      type: 'audio',
+      size: 5120000,
+      path: '/uploads/audio/背景音乐.mp3',
+      url: '/uploads/audio/背景音乐.mp3',
+      uploader: 'admin',
+      uploadTime: '2024-01-14 14:20:00'
+    },
+    {
+      id: 5,
+      name: '系统配置.json',
+      type: 'other',
+      size: 2048,
+      path: '/uploads/others/系统配置.json',
+      url: '/uploads/others/系统配置.json',
+      uploader: 'admin',
+      uploadTime: '2024-01-14 11:30:00'
+    }
+  ],
+  
+  systemConfig: {
+    // 系统基础配置
+    systemName: 'RBAC管理系统1',
+    systemVersion: '1.0.0',
+    timezone: 'Asia/Shanghai',
+    dateFormat: 'YYYY-MM-DD',
+    timeFormat: '24',
+    language: 'zh-CN',
+    pageSize: 20,
+    sessionTimeout: 120,
+    maintenanceMode: false,
+    maintenanceMessage: '系统正在维护中，请稍后再试',
+    enableRegister: true,
+    enableCaptcha: true,
+    enable2FA: false,
+    // 日志配置
+    logLevel: 'info',
+    logRetentionDays: 30,
+    enableOperationLog: true,
+    enableLoginLog: true,
+    enableErrorLog: true,
+    // 性能配置
+    cacheType: 'memory',
+    cacheExpireTime: 3600,
+    maxUploadSize: 10,
+    maxConnections: 1000,
+    enableGzip: true,
+    enableCDN: false
+  },
+  
+  websiteConfig: {
+    siteName: 'RBAC管理系统',
+    siteTitle: 'RBAC权限管理系统',
+    keywords: 'RBAC,权限管理,用户管理,角色管理',
+    description: '基于Vue3和Element Plus的RBAC权限管理系统',
+    logo: '',
+    favicon: '',
+    domain: 'localhost',
+    port: 3000,
+    icp: '',
+    copyright: '© 2024 RBAC管理系统. All rights reserved.',
+    contactEmail: 'admin@example.com',
+    contactPhone: '400-123-4567',
+    contactAddress: '北京市朝阳区xxx街道xxx号',
+    status: 'online',
+    maintenanceMessage: '',
+    // SEO配置
+    defaultLanguage: 'zh-CN',
+    charset: 'UTF-8',
+    robots: 'User-agent: *\nDisallow: /admin/\nDisallow: /api/',
+    sitemap: 'https://example.com/sitemap.xml',
+    enableGzip: true,
+    enableCDN: false
+  },
+  
+  notificationConfig: {
+    enableSystemNotification: true,
+    enableEmailNotification: true,
+    enableSmsNotification: false,
+    enableWechatNotification: false,
+    notificationRetentionDays: 30,
+    batchSendInterval: 5,
+    // 邮件配置
+    smtpHost: 'smtp.qq.com',
+    smtpPort: 587,
+    senderEmail: 'admin@example.com',
+    senderName: '系统管理员',
+    username: 'admin@example.com',
+    password: '',
+    enableSsl: false,
+    enableTls: true,
+    // 短信配置
+    provider: 'aliyun',
+    accessKey: '',
+    secretKey: '',
+    signature: '系统通知',
+    // 微信配置
+    corpId: '',
+    agentId: '',
+    secret: '',
+    token: ''
+  },
+  
+  securityConfig: {
+    enableLoginCaptcha: true,
+    enable2FA: false,
+    passwordMinLength: 9,
+    passwordComplexity: ['lowercase', 'number'],
+    passwordExpireDays: 90,
+    enableLoginLock: true,
+    maxLoginAttempts: 5,
+    lockoutDuration: 15,
+    sessionTimeout: 120,
+    enableIpWhitelist: false,
+    ipWhitelist: '',
+    enableOperationLog: true,
+    enableLoginLog: true,
+    // 数据加密配置
+    encryptionAlgorithm: 'aes-256',
+    enableDataMasking: true,
+    enableTransportEncryption: true,
+    enableStorageEncryption: false,
+    keyRotationDays: 90,
+    // 访问控制配置
+    enableRateLimit: true,
+    requestsPerMinute: 100,
+    requestsPerHour: 1000,
+    enableCors: true,
+    allowedOrigins: '*',
+    enableCsrfProtection: true,
+    enableXssProtection: true,
+    enableSqlInjectionProtection: true
+  },
+  
+  notificationTemplates: [
+    {
+      id: 1,
+      name: '登录通知1',
+      type: 'login',
+      title: '登录通知',
+      content: '您的账号在 {time} 从 {ip} 登录，如非本人操作，请及时修改密码。',
+      status: 'active'
+    },
+    {
+      id: 2,
+      name: '密码修改通知',
+      type: 'password_change',
+      title: '密码修改通知',
+      content: '您的账号密码已于 {time} 被修改，如非本人操作，请联系管理员。',
+      status: 'active'
+    },
+    {
+      id: 3,
+      name: '系统维护通知',
+      type: 'maintenance',
+      title: '系统维护通知',
+      content: '系统将于 {start_time} 至 {end_time} 进行维护，期间可能影响正常使用。',
+      status: 'active'
+    },
+    {
+      id: 4,
+      name: '异常登录通知',
+      type: 'abnormal_login',
+      title: '异常登录通知',
+      content: '检测到您的账号在 {time} 从 {ip} 异常登录，请确认是否为本人操作。',
+      status: 'active'
+    }
+  ],
+  
+  securityAuditLogs: [
+    {
+      id: 1,
+      time: '2024-01-15 10:30:00',
+      user: 'admin',
+      action: '登录系统',
+      ip: '192.168.1.100',
+      result: '成功',
+      description: '管理员登录系统'
+    },
+    {
+      id: 2,
+      time: '2024-01-15 10:25:00',
+      user: 'user001',
+      action: '修改密码',
+      ip: '192.168.1.101',
+      result: '成功',
+      description: '用户修改登录密码'
+    },
+    {
+      id: 3,
+      time: '2024-01-15 10:20:00',
+      user: 'unknown',
+      action: '登录尝试',
+      ip: '192.168.1.200',
+      result: '失败',
+      description: '未知用户尝试登录，密码错误'
+    },
+    {
+      id: 4,
+      time: '2024-01-15 10:15:00',
+      user: 'admin',
+      action: '修改安全配置',
+      ip: '192.168.1.100',
+      result: '成功',
+      description: '管理员修改系统安全配置'
+    },
+    {
+      id: 5,
+      time: '2024-01-15 10:10:00',
+      user: 'user002',
+      action: '访问敏感数据',
+      ip: '192.168.1.102',
+      result: '成功',
+      description: '用户访问用户管理模块'
     }
   ]
 }
@@ -477,6 +854,29 @@ const getCurrentTime = () => {
   }).replace(/\//g, '-')
 }
 
+// 生成验证码
+const generateCaptcha = () => {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+  let code = ''
+  for (let i = 0; i < 4; i++) {
+    code += chars.charAt(Math.floor(Math.random() * chars.length))
+  }
+  
+  // 生成简单的SVG验证码图片
+  const svg = `
+    <svg width="120" height="40" xmlns="http://www.w3.org/2000/svg">
+      <rect width="120" height="40" fill="#f0f0f0"/>
+      <text x="60" y="25" font-family="Arial, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#333">${code}</text>
+      <line x1="10" y1="15" x2="110" y2="25" stroke="#ccc" stroke-width="1"/>
+      <line x1="20" y1="30" x2="100" y2="10" stroke="#ccc" stroke-width="1"/>
+    </svg>
+  `
+  
+  const image = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)))
+  
+  return { code, image }
+}
+
 // 模拟API响应
 const createResponse = (data, message = '操作成功') => ({
   code: 200,
@@ -495,6 +895,11 @@ export const userApi = {
   // 登录
   async login(credentials) {
     await delay()
+    
+    // 验证验证码
+    if (!credentials.captcha || credentials.captcha.toUpperCase() !== mockData.currentCaptcha.code.toUpperCase()) {
+      return createErrorResponse('验证码错误')
+    }
     
     const user = mockData.users.find(u => 
       u.username === credentials.username && u.password === credentials.password
@@ -667,6 +1072,30 @@ export const userApi = {
     const actualDeletedCount = deletedCount - mockData.users.length
     
     return createResponse({ deletedCount: actualDeletedCount }, `成功删除 ${actualDeletedCount} 个用户`)
+  },
+  
+  // 获取验证码
+  async getCaptcha() {
+    await delay(200)
+    
+    const captcha = generateCaptcha()
+    mockData.currentCaptcha = captcha
+    
+    return createResponse({
+      image: captcha.image,
+      captchaId: Date.now() // 模拟验证码ID
+    }, '获取验证码成功')
+  },
+  
+  // 验证验证码
+  async verifyCaptcha(captcha) {
+    await delay(100)
+    
+    if (!captcha || captcha.toUpperCase() !== mockData.currentCaptcha.code.toUpperCase()) {
+      return createErrorResponse('验证码错误')
+    }
+    
+    return createResponse(null, '验证码正确')
   }
 }
 
@@ -1073,12 +1502,333 @@ export const loginLogApi = {
   }
 }
 
+// 字典配置相关API
+export const dictionaryApi = {
+  // 获取字典列表
+  async getDictionaryList(params = {}) {
+    await delay()
+    
+    const { page = 1, size = 10, keyword = '', status = '' } = params
+    let dictionaries = [...mockData.dictionaries]
+    
+    // 搜索过滤
+    if (keyword) {
+      dictionaries = dictionaries.filter(dict => 
+        dict.name.includes(keyword) || 
+        dict.code.includes(keyword)
+      )
+    }
+    
+    // 状态过滤
+    if (status) {
+      dictionaries = dictionaries.filter(dict => dict.status === status)
+    }
+    
+    const total = dictionaries.length
+    const start = (page - 1) * size
+    const end = start + size
+    const list = dictionaries.slice(start, end)
+    
+    return createResponse({
+      list,
+      total,
+      page,
+      size
+    })
+  },
+  
+  // 获取字典详情
+  async getDictionaryById(id) {
+    await delay()
+    
+    const dictionary = mockData.dictionaries.find(d => d.id === id)
+    if (!dictionary) {
+      return createErrorResponse('字典不存在')
+    }
+    
+    return createResponse(dictionary)
+  },
+  
+  // 创建字典
+  async createDictionary(dictionaryData) {
+    await delay()
+    
+    const newDictionary = {
+      id: generateId(),
+      ...dictionaryData,
+      updatedAt: getCurrentTime()
+    }
+    
+    mockData.dictionaries.push(newDictionary)
+    
+    return createResponse(newDictionary, '字典创建成功')
+  },
+  
+  // 更新字典
+  async updateDictionary(id, dictionaryData) {
+    await delay()
+    
+    const dictionaryIndex = mockData.dictionaries.findIndex(d => d.id === id)
+    if (dictionaryIndex === -1) {
+      return createErrorResponse('字典不存在')
+    }
+    
+    mockData.dictionaries[dictionaryIndex] = {
+      ...mockData.dictionaries[dictionaryIndex],
+      ...dictionaryData,
+      updatedAt: getCurrentTime()
+    }
+    
+    return createResponse(mockData.dictionaries[dictionaryIndex], '字典更新成功')
+  },
+  
+  // 删除字典
+  async deleteDictionary(id) {
+    await delay()
+    
+    const dictionaryIndex = mockData.dictionaries.findIndex(d => d.id === id)
+    if (dictionaryIndex === -1) {
+      return createErrorResponse('字典不存在')
+    }
+    
+    mockData.dictionaries.splice(dictionaryIndex, 1)
+    
+    return createResponse(null, '字典删除成功')
+  },
+  
+  // 批量删除字典
+  async batchDeleteDictionaries(ids) {
+    await delay()
+    
+    const deletedCount = mockData.dictionaries.length
+    mockData.dictionaries = mockData.dictionaries.filter(d => !ids.includes(d.id))
+    const actualDeletedCount = deletedCount - mockData.dictionaries.length
+    
+    return createResponse({ deletedCount: actualDeletedCount }, `成功删除 ${actualDeletedCount} 个字典`)
+  }
+}
+
+// 文件配置相关API
+export const fileApi = {
+  // 获取文件列表
+  async getFileList(params = {}) {
+    await delay()
+    
+    const { page = 1, size = 10, keyword = '', fileType = '' } = params
+    let files = [...mockData.files]
+    
+    // 搜索过滤
+    if (keyword) {
+      files = files.filter(file => 
+        file.name.includes(keyword)
+      )
+    }
+    
+    // 文件类型过滤
+    if (fileType) {
+      files = files.filter(file => file.type === fileType)
+    }
+    
+    const total = files.length
+    const start = (page - 1) * size
+    const end = start + size
+    const list = files.slice(start, end)
+    
+    return createResponse({
+      list,
+      total,
+      page,
+      size
+    })
+  },
+  
+  // 获取文件详情
+  async getFileById(id) {
+    await delay()
+    
+    const file = mockData.files.find(f => f.id === id)
+    if (!file) {
+      return createErrorResponse('文件不存在')
+    }
+    
+    return createResponse(file)
+  },
+  
+  // 删除文件
+  async deleteFile(id) {
+    await delay()
+    
+    const fileIndex = mockData.files.findIndex(f => f.id === id)
+    if (fileIndex === -1) {
+      return createErrorResponse('文件不存在')
+    }
+    
+    mockData.files.splice(fileIndex, 1)
+    
+    return createResponse(null, '文件删除成功')
+  },
+  
+  // 批量删除文件
+  async batchDeleteFiles(ids) {
+    await delay()
+    
+    const deletedCount = mockData.files.length
+    mockData.files = mockData.files.filter(f => !ids.includes(f.id))
+    const actualDeletedCount = deletedCount - mockData.files.length
+    
+    return createResponse({ deletedCount: actualDeletedCount }, `成功删除 ${actualDeletedCount} 个文件`)
+  }
+}
+
+// 系统配置相关API
+export const systemConfigApi = {
+  // 获取系统配置
+  async getSystemConfig() {
+    await delay()
+    return createResponse(mockData.systemConfig)
+  },
+  
+  // 更新系统配置
+  async updateSystemConfig(configData) {
+    await delay()
+    
+    mockData.systemConfig = {
+      ...mockData.systemConfig,
+      ...configData
+    }
+    
+    return createResponse(mockData.systemConfig, '系统配置更新成功')
+  }
+}
+
+// 网站配置相关API
+export const websiteConfigApi = {
+  // 获取网站配置
+  async getWebsiteConfig() {
+    await delay()
+    return createResponse(mockData.websiteConfig)
+  },
+  
+  // 更新网站配置
+  async updateWebsiteConfig(configData) {
+    await delay()
+    
+    mockData.websiteConfig = {
+      ...mockData.websiteConfig,
+      ...configData
+    }
+    
+    return createResponse(mockData.websiteConfig, '网站配置更新成功')
+  }
+}
+
+// 通知配置相关API
+export const notificationConfigApi = {
+  // 获取通知配置
+  async getNotificationConfig() {
+    await delay()
+    return createResponse(mockData.notificationConfig)
+  },
+  
+  // 更新通知配置
+  async updateNotificationConfig(configData) {
+    await delay()
+    
+    mockData.notificationConfig = {
+      ...mockData.notificationConfig,
+      ...configData
+    }
+    
+    return createResponse(mockData.notificationConfig, '通知配置更新成功')
+  },
+  
+  // 获取通知模板列表
+  async getNotificationTemplates() {
+    await delay()
+    return createResponse(mockData.notificationTemplates)
+  },
+  
+  // 更新通知模板
+  async updateNotificationTemplate(id, templateData) {
+    await delay()
+    
+    const templateIndex = mockData.notificationTemplates.findIndex(t => t.id === id)
+    if (templateIndex === -1) {
+      return createErrorResponse('通知模板不存在')
+    }
+    
+    mockData.notificationTemplates[templateIndex] = {
+      ...mockData.notificationTemplates[templateIndex],
+      ...templateData
+    }
+    
+    return createResponse(mockData.notificationTemplates[templateIndex], '通知模板更新成功')
+  }
+}
+
+// 安全配置相关API
+export const securityConfigApi = {
+  // 获取安全配置
+  async getSecurityConfig() {
+    await delay()
+    return createResponse(mockData.securityConfig)
+  },
+  
+  // 更新安全配置
+  async updateSecurityConfig(configData) {
+    await delay()
+    
+    mockData.securityConfig = {
+      ...mockData.securityConfig,
+      ...configData
+    }
+    
+    return createResponse(mockData.securityConfig, '安全配置更新成功')
+  },
+  
+  // 获取安全审计日志
+  async getSecurityAuditLogs(params = {}) {
+    await delay()
+    
+    const { page = 1, size = 10, type = '', status = '' } = params
+    let logs = [...mockData.securityAuditLogs]
+    
+    // 类型过滤
+    if (type) {
+      logs = logs.filter(log => log.type === type)
+    }
+    
+    // 状态过滤
+    if (status) {
+      logs = logs.filter(log => log.status === status)
+    }
+    
+    const total = logs.length
+    const start = (page - 1) * size
+    const end = start + size
+    const list = logs.slice(start, end)
+    
+    return createResponse({
+      list,
+      total,
+      page,
+      size
+    })
+  }
+}
+
 export default {
   userApi,
   roleApi,
   permissionApi,
   statsApi,
   tableApi,
-  loginLogApi
+  loginLogApi,
+  dictionaryApi,
+  fileApi,
+  systemConfigApi,
+  websiteConfigApi,
+  notificationConfigApi,
+  securityConfigApi
 }
 

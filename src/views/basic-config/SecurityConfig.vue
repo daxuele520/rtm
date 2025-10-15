@@ -228,6 +228,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Check } from '@element-plus/icons-vue'
+import { securityConfigService } from '@/api'
 
 // 响应式数据
 const saving = ref(false)
@@ -274,53 +275,7 @@ const accessControlForm = reactive({
 })
 
 // 安全审计日志
-const securityAuditLogs = ref([
-  {
-    id: 1,
-    time: '2024-01-15 10:30:00',
-    user: 'admin',
-    action: '登录系统',
-    ip: '192.168.1.100',
-    result: '成功',
-    description: '管理员登录系统'
-  },
-  {
-    id: 2,
-    time: '2024-01-15 10:25:00',
-    user: 'user001',
-    action: '修改密码',
-    ip: '192.168.1.101',
-    result: '成功',
-    description: '用户修改登录密码'
-  },
-  {
-    id: 3,
-    time: '2024-01-15 10:20:00',
-    user: 'unknown',
-    action: '登录尝试',
-    ip: '192.168.1.200',
-    result: '失败',
-    description: '未知用户尝试登录，密码错误'
-  },
-  {
-    id: 4,
-    time: '2024-01-15 10:15:00',
-    user: 'admin',
-    action: '修改安全配置',
-    ip: '192.168.1.100',
-    result: '成功',
-    description: '管理员修改系统安全配置'
-  },
-  {
-    id: 5,
-    time: '2024-01-15 10:10:00',
-    user: 'user002',
-    action: '访问敏感数据',
-    ip: '192.168.1.102',
-    result: '成功',
-    description: '用户访问用户管理模块'
-  }
-])
+const securityAuditLogs = ref([])
 
 // 审计日志分页
 const auditPagination = reactive({
@@ -377,10 +332,19 @@ const handleSave = async () => {
     
     saving.value = true
     
-    // 模拟保存API调用
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    const configData = {
+      ...securityForm,
+      ...encryptionForm,
+      ...accessControlForm
+    }
     
-    ElMessage.success('配置保存成功')
+    const response = await securityConfigService.updateSecurityConfig(configData)
+    
+    if (response.code === 200) {
+      ElMessage.success('配置保存成功')
+    } else {
+      ElMessage.error(response.message || '配置保存失败')
+    }
   } catch (error) {
     if (error !== false) {
       ElMessage.error('配置保存失败')
@@ -391,22 +355,74 @@ const handleSave = async () => {
   }
 }
 
+// 获取配置
+const getConfig = async () => {
+  try {
+    const response = await securityConfigService.getSecurityConfig()
+    if (response.code === 200) {
+      const config = response.data
+      Object.assign(securityForm, config)
+      // 分离加密配置
+      if (config.encryptionAlgorithm) {
+        Object.assign(encryptionForm, {
+          encryptionAlgorithm: config.encryptionAlgorithm,
+          enableDataMasking: config.enableDataMasking,
+          enableTransportEncryption: config.enableTransportEncryption,
+          enableStorageEncryption: config.enableStorageEncryption,
+          keyRotationDays: config.keyRotationDays
+        })
+      }
+      // 分离访问控制配置
+      if (config.enableRateLimit) {
+        Object.assign(accessControlForm, {
+          enableRateLimit: config.enableRateLimit,
+          requestsPerMinute: config.requestsPerMinute,
+          requestsPerHour: config.requestsPerHour,
+          enableCors: config.enableCors,
+          allowedOrigins: config.allowedOrigins,
+          enableCsrfProtection: config.enableCsrfProtection,
+          enableXssProtection: config.enableXssProtection,
+          enableSqlInjectionProtection: config.enableSqlInjectionProtection
+        })
+      }
+    }
+  } catch (error) {
+    console.error('获取安全配置失败:', error)
+  }
+}
+
+// 获取安全审计日志
+const getSecurityAuditLogs = async () => {
+  try {
+    const response = await securityConfigService.getSecurityAuditLogs({
+      page: auditPagination.page,
+      size: auditPagination.size
+    })
+    if (response.code === 200) {
+      securityAuditLogs.value = response.data.list
+      auditPagination.total = response.data.total
+    }
+  } catch (error) {
+    console.error('获取安全审计日志失败:', error)
+  }
+}
+
 // 审计日志分页处理
 const handleAuditSizeChange = (size) => {
   auditPagination.size = size
   auditPagination.page = 1
-  // 这里可以重新加载审计日志
+  getSecurityAuditLogs()
 }
 
 const handleAuditCurrentChange = (page) => {
   auditPagination.page = page
-  // 这里可以重新加载审计日志
+  getSecurityAuditLogs()
 }
 
 // 初始化
 onMounted(() => {
-  // 这里可以加载已保存的配置
-  console.log('安全配置页面初始化')
+  getConfig()
+  getSecurityAuditLogs()
 })
 </script>
 
